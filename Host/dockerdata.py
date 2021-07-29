@@ -1,6 +1,8 @@
+import json
 import requests
 from socket import gethostbyname, gethostname
 import docker
+import time
 
 def getdata():
     cli = docker.from_env()
@@ -13,13 +15,24 @@ def getdata():
         retdata.append(i)
     return retdata
 
-host="http://127.0.0.1:5000/dockermsg"
+def getIPConfig():
+    with open("./config.json", "r") as f:
+        configs = json.load(f)
+        return configs["ryu"]
+
+
+host="http://" + getIPConfig() + ":5000/dockermsg"
 hostname = gethostname()
 ip = gethostbyname(hostname)
-senddata = {
-    "host": ip,
-    "data": getdata()
-}
+while True:
 
-po = requests.post(url=host, json=senddata)
+    senddata = {
+        "host": ip,
+        "data": getdata()
+    }
+
+    po = requests.post(url=host, json=senddata)
+    time.sleep(2)
 print(po.text)
+
+getIPConfig()

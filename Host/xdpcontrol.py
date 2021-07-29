@@ -81,7 +81,9 @@ def xdpstop():
         b.remove_xdp(i, 0)
 
 if __name__ == '__main__':
-    xdpcontrol(["127.0.0.1"])
+    xdpstop()
     import time
-    time.sleep(20)
+    time.sleep(19)
+    xdpcontrol(["172.17.0.1"])
+    time.sleep(6)
     xdpstop()

@@ -5,6 +5,7 @@ from struct import pack
 import time
 from collections import namedtuple, defaultdict
 import transinfo_client
+from dockerdata import getIPConfig
 
 
 def tcptrace_compile():
@@ -204,10 +205,11 @@ if __name__ == '__main__':
     ip4s, ip4r, ip6s, ip6r = tcptrace_compile()
     hostname = gethostname()
     ip = gethostbyname(hostname)
+    ryuIP = getIPConfig()
     while True:
         ip4, ip6 = tcptrace_func(ip4s, ip4r, ip6s, ip6r)
         for i in ip4:
-            if i["daddr"] != "30.0.1.157":
+            if i["daddr"] != ryuIP and i["com"] != "Xtightvnc":
                 transinfo_client.transinfo({
                     "host": ip,
                     "data": i,
@@ -215,7 +217,7 @@ if __name__ == '__main__':
                     "protocol": "tcp"
                 })
         for i in ip6:
-            if i["daddr"] != "::ffff:30.0.1.157":
+            if i["daddr"] != "::ffff:"+ryuIP:
                 transinfo_client.transinfo({
                     "host": ip,
                     "data": i,
