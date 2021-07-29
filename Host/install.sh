@@ -21,3 +21,5 @@ pip install requests
 pip install grpcio -i https://mirrors.aliyun.com/pypi/simple/
 
 pip install grpcio-tools -i https://mirrors.aliyun.com/pypi/simple/
+
+pip install netifaces
