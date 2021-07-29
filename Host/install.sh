@@ -1,5 +1,7 @@
 sudo apt update
 
+apt install python-pip
+
 sudo apt-get install bpfcc-tools linux-headers-$(uname -r)
 
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys D4284CDD
@@ -16,3 +18,6 @@ pip install docker
 
 pip install requests
 
+pip install grpcio -i https://mirrors.aliyun.com/pypi/simple/
+
+pip install grpcio-tools -i https://mirrors.aliyun.com/pypi/simple/
