@@ -1,0 +1,49 @@
+// python -m grpc_tools.protoc --python_out=. --grpc_python_out=. -I.
+// transinfo.proto
+
+/*
+sudo apt update
+sudo apt install mysql-client-core-5.7
+sudo apt install python-pip
+pip install grpcio -i https://mirrors.aliyun.com/pypi/simple/
+pip install grpcio-tools -i https://mirrors.aliyun.com/pypi/simple/
+pip install pyalalchemy -i https://mirrors.aliyun.com/pypi/simple/
+*/
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.transinfo";
+option java_outer_classname = "TransInfoProto";
+option objc_class_prefix = "TIP";
+
+package transinfo;
+
+service TransInfo {
+  rpc GetInfo(InfoSending) returns (SuccessReply) {}
+}
+
+message InfoSending {
+  // {'type': 'ip4', 'data': {'daddr': '192.168.200.200', 'send_byte': 1400,
+  // 'sport': '22', 'recv_byte': 1160, 'time': 1623748639.296404, 'dport':
+  // '6989', 'com': '7432', 'saddr': '30.0.1.77', 'pid': 7432}, 'protocol':
+  // 'tcp'}
+  string type = 1;
+  string protocol = 2;
+  string saddr = 3;
+  int32 sport = 4;
+  int32 send_byte = 5;
+  string daddr = 6;
+  int32 dport = 7;
+  int32 recv_byte = 8;
+  int32 time = 9;
+  int32 pid = 10;
+  string com = 11;
+  string host = 12;
+  int32 prev_time = 13;
+}
+
+message SuccessReply {
+  string reply = 1;
+  int32 reply_code = 2;
+}

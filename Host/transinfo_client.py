@@ -5,6 +5,7 @@ import json
 import transinfo_pb2
 import transinfo_pb2_grpc
 import xdpcontrol
+from dockerdata import getIPConfig
 
 
 def get_prev_time():
@@ -31,7 +32,7 @@ def run(info):
 
     # connect
     print(info)
-    with grpc.insecure_channel('30.0.1.7:11451') as channel:
+    with grpc.insecure_channel(getIPConfig() + ':11451') as channel:
         stub = transinfo_pb2_grpc.TransInfoStub(channel)
         if(info['protocol'] == 'tcp'):
             response = stub.GetInfo(transinfo_pb2.InfoSending(
