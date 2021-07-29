@@ -4,23 +4,23 @@ import struct
 import netifaces
 
 
-# 获取网卡
+# get net interface
 def getNetIface():
     return [i for i in netifaces.interfaces() if i[0:4] == "veth"]
 
 
-# 转换ip
+# transform IP
 def transIP(ip):
     return struct.unpack("=I", inet_aton(ip))[0]
 
 
-# 生成控制代码
+# generate control code
 def generateCode(ip):
     code = """if(ip->saddr == %s || ip->daddr == %s) { return XDP_DROP; }
                     //#CODE#""" % (ip, ip)
     return code
 
-# 生成XDP代码
+# generate XDP code
 def makeCode(ips):
     code_block = """
         #define KBUILD_MODNAME "filter"
@@ -54,7 +54,7 @@ def makeCode(ips):
     return code_block
 
 
-# xdp控制
+# xdp control
 def xdpcontrol(ips):
     text = makeCode(ips)
     # print(text)
