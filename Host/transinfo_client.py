@@ -5,7 +5,12 @@ import json
 import transinfo_pb2
 import transinfo_pb2_grpc
 import xdpcontrol
-from dockerdata import getIPConfig
+
+
+def getIPConfig():
+    with open("./config.json", "r") as f:
+        configs = json.load(f)
+        return configs["ryu"]
 
 
 def get_prev_time():
@@ -34,7 +39,7 @@ def run(info):
     print(info)
     with grpc.insecure_channel(getIPConfig() + ':11451') as channel:
         stub = transinfo_pb2_grpc.TransInfoStub(channel)
-        if(info['protocol'] == 'tcp'):
+        if (info['protocol'] == 'tcp'):
             response = stub.GetInfo(transinfo_pb2.InfoSending(
                 type=info['type'],
                 protocol=info['protocol'],
@@ -118,5 +123,7 @@ def get_time():
 
 
 if __name__ == '__main__':
-    transinfo({'type': 'ip4', 'host': '30.0.1.227', 'data': {'daddr': '10.168.16.15', 'send_byte': 773, 'sport': '5901', 'recv_byte': 10,
-                                                             'time': get_time(), 'dport': '47420', 'com': 'Xtightvnc', 'saddr': '30.0.1.227', 'pid': 1243}, 'protocol': 'tcp'})
+    transinfo({'type': 'ip4', 'host': '30.0.1.227',
+               'data': {'daddr': '10.168.16.15', 'send_byte': 773, 'sport': '5901', 'recv_byte': 10,
+                        'time': get_time(), 'dport': '47420', 'com': 'Xtightvnc', 'saddr': '30.0.1.227', 'pid': 1243},
+               'protocol': 'tcp'})
