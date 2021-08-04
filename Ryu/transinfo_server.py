@@ -11,9 +11,6 @@ from concurrent import futures
 session = None
 update_time = int(time.time())
 
-"""sh
-"""
-
 
 def insert(req):
     new_pkg = Pkg(Ty=req.type, protocol=req.protocol, saddr=req.saddr, sport=req.sport, send_byte=req.send_byte,
@@ -45,6 +42,7 @@ def ban(saddr, banned=True):  # True => banned, False => warning
     item = session.query(BanIP).filter(BanIP.ban_ip == saddr).first()
     print(item)
     global update_time
+    return_code = 0
 
     if item == None:
         new_ban_ip = BanIP(ban_ip=saddr, banned=banned)
@@ -52,13 +50,21 @@ def ban(saddr, banned=True):  # True => banned, False => warning
         if banned:
             update_time = int(time.time())
         session.commit()
-        print(str(saddr) + " is added to the banned list.")
-    elif item.banned == False and banned == True:
-        item.banned = True
+        # print(str(saddr) + " is added to the banned list.")
+    elif item.banned != banned:
+        item.banned = banned
         update_time = int(time.time())
         session.commit()
     else:
         print("Banned ip add failed. " + str(saddr) + " exists.")
+
+
+def add_danger_ip(saddr):
+    ban(saddr, banned=True)
+
+
+def add_doubt_ip(saddr):
+    ban(saddr, banned=False)
 
 
 def get_db_session():
