@@ -5,7 +5,7 @@ from struct import pack
 import time
 from collections import namedtuple, defaultdict
 import transinfo_client
-from dockerdata import getIPConfig
+import json
 
 
 def tcptrace_compile():
@@ -200,6 +200,11 @@ def tcptrace_func(ipv4_send_bytes, ipv4_recv_bytes, ipv6_send_bytes, ipv6_recv_b
         for k, (send_bytes, recv_bytes) in ipv6_throughput.items()
     ]
     return (ipv4_data, ipv6_data)
+
+def getIPConfig():
+    with open("./config.json", "r") as f:
+        configs = json.load(f)
+        return configs["ryu"]
 
 if __name__ == '__main__':
     ip4s, ip4r, ip6s, ip6r = tcptrace_compile()
