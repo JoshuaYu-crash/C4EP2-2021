@@ -7,8 +7,6 @@ import logging
 import grpc
 import time
 from concurrent import futures
-import pymysql
-pymysql.install_as_MySQLdb()
 
 session = None
 update_time = int(time.time())
