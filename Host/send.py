@@ -22,7 +22,7 @@ from config import Config
 def tcpFilter(datas):
     retData = []
     for data in datas:
-        if True:
+        if data["daddr"] != Config.RyuIP and data["com"] != "Xtightvnc" and data["daddr"] != "::ffff:" + Config.RyuIP:
             retData.append(data)
     return retData
 
