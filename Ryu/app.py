@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import redis
 from flask_cors import *
-import info_query
+from info_query import *
 from transinfo_server import get_db_session
 session = get_db_session()
 
@@ -12,11 +12,14 @@ app = Flask(__name__)
 CORS(app, supports_credentials=True)
 
 
+# 前一秒的流量信息，时间戳和流量大小
 @app.route("/getnetdata")
 def getNetData():
-    # 前一秒的流量信息，时间戳和流量大小
-    dockerName = request.form.get("dockername")
-    pass
+    hostIP = request.args.get("hostip")
+    dockerIP = request.args.get("dockerip")
+    protocol = request.args.get("protocol")
+    data = get_saddr_byte(dockerIP, hostIP, protocol)
+    return jsonify(data)
 
 
 # 将IP变为可疑IP
