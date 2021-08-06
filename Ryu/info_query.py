@@ -11,7 +11,7 @@ def get_saddr_byte(daddr, host, protocol, session=get_db_session()):
     import time
     now = time.time()
     pkgs = session.query(Pkg).filter(Pkg.daddr == daddr, Pkg.protocol == protocol, Pkg.host == host,
-                                     Pkg.time >= now - 2).all()
+                                     Pkg.time >= now - 20).all()
     ret = 0
     last_time = 0
     try:
