@@ -22,7 +22,7 @@ def getNetData():
     print(hostIP)
     print(dockerIP)
     print(protocol)
-    data = get_saddr_byte(dockerIP, hostIP, protocol, session)
+    data = get_saddr_byte(dockerIP, hostIP, protocol)
     return jsonify(data)
 
 
@@ -45,7 +45,7 @@ def setDangerIP():
 # 获取所有的可疑IP和危险IP
 @app.route("/getbanip", methods=["GET"])
 def getBanIP():
-    data = getBanIP(session)
+    data = getBanIP()
     return jsonify(data)
 
 
