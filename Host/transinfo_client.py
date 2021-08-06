@@ -5,12 +5,7 @@ import json
 import transinfo_pb2
 import transinfo_pb2_grpc
 import xdpcontrol
-
-
-def getIPConfig():
-    with open("./config.json", "r") as f:
-        configs = json.load(f)
-        return configs["ryu"]
+from config import Config
 
 
 def get_prev_time():
@@ -37,7 +32,7 @@ def run(info):
 
     # connect
     print(info)
-    with grpc.insecure_channel(getIPConfig() + ':11451') as channel:
+    with grpc.insecure_channel(Config.RyuIP + ':11451') as channel:
         stub = transinfo_pb2_grpc.TransInfoStub(channel)
         if (info['protocol'] == 'tcp'):
             response = stub.GetInfo(transinfo_pb2.InfoSending(
