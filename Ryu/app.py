@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify
 import redis
 from flask_cors import *
 from info_query import *
 from transinfo_server import get_db_session
 session = get_db_session()
+from ip_ban import *
 
 
 r = redis.Redis(host="127.0.0.1", port=6379)
@@ -18,25 +19,31 @@ def getNetData():
     hostIP = request.args.get("hostip")
     dockerIP = request.args.get("dockerip")
     protocol = request.args.get("protocol")
-    data = get_saddr_byte(dockerIP, hostIP, protocol)
+    data = get_saddr_byte(dockerIP, hostIP, protocol, session)
     return jsonify(data)
 
 
 # 将IP变为可疑IP
-@app.route("/setdoubtip", methods=["POST"])
+@app.route("/setdoubtip", methods=["GET"])
 def setDoubtIP():
-    pass
+    doubtIP = request.args.get("doubtip")
+    add_doubt_ip(doubtIP)
+    return "OK"
 
 
 # 将IP变为危险IP
-@app.route("/setDangerip", methods=["POST"])
+@app.route("/setDangerip", methods=["GET"])
 def setDangerIP():
-    pass
+    dangerIP = request.args.get("dangerip")
+    add_doubt_ip(dangerIP)
+    return "OK"
 
 
+# 获取所有的可疑IP和危险IP
 @app.route("/getbanip", methods=["GET"])
 def getBanIP():
-    pass
+    data = getBanIP(session)
+    return jsonify(data)
 
 
 if __name__ == '__main__':

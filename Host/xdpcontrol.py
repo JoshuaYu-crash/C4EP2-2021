@@ -23,7 +23,6 @@ def generateCode(ip):
 # generate XDP code
 def makeCode(ips):
     code_block = """
-        #define KBUILD_MODNAME "filter"
         #include <linux/bpf.h>
         #include <linux/if_ether.h>
         #include <linux/ip.h>
@@ -67,7 +66,6 @@ def xdpcontrol(ips):
 
 def xdpstop():
     text = """
-    #define KBUILD_MODNAME "filter"
     #include <linux/bpf.h>
 
     int filter(struct xdp_md *ctx) {
