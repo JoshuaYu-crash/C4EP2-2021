@@ -1,6 +1,6 @@
 sudo apt update
 
-sudo apt install python3-pip
+sudo apt -y install python3-pip
 
 # Trusty (14.04 LTS) and older
 VER=trusty
@@ -39,12 +39,14 @@ make
 sudo make install
 popd
 
+apt -y install docker.io
+
 pip3 install docker
 
 pip3 install requests
 
-pip install grpcio -i https://mirrors.aliyun.com/pypi/simple/
+pip3 install grpcio -i https://mirrors.aliyun.com/pypi/simple/
 
-pip install grpcio-tools -i https://mirrors.aliyun.com/pypi/simple/
+pip3 install grpcio-tools -i https://mirrors.aliyun.com/pypi/simple/
 
-pip install netifaces
+pip3 install netifaces

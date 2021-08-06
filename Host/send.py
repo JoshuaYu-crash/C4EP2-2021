@@ -36,7 +36,7 @@ def sendDatas(datas, type, protocol):
             "type": type,
             "protocol": protocol
         }
-        print(data)
+        transinfo(data)
 
 
 def sendDockerData():
