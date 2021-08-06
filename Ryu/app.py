@@ -19,6 +19,9 @@ def getNetData():
     hostIP = request.args.get("hostip")
     dockerIP = request.args.get("dockerip")
     protocol = request.args.get("protocol")
+    print(hostIP)
+    print(dockerIP)
+    print(protocol)
     data = get_saddr_byte(dockerIP, hostIP, protocol, session)
     return jsonify(data)
 

@@ -12,3 +12,5 @@ pip3 install MySQL-python -i https://mirrors.aliyun.com/pypi/simple/
 pip3 install sqlalchemy -i https://mirrors.aliyun.com/pypi/simple/
 pip3 install flask -i https://mirrors.aliyun.com/pypi/simple/
 pip3 install pyecharts -i https://mirrors.aliyun.com/pypi/simple/
+pip3 install redis -i https://mirrors.aliyun.com/pypi/simple/
+pip3 install flask_cors -i https://mirrors.aliyun.com/pypi/simple/
