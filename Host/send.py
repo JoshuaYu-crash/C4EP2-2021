@@ -5,8 +5,8 @@ from tcp.tcptrace import tcptrace_func, tcptrace_compile
 from udp.udptrace import udptrace_func, udptrace_compile
 from icmp.icmptrace import icmptrace_func, icmptrace_compile
 
-# docker data
-from docker.dockerdata import getDockerData
+# dockerdata data
+from dockerdata.dockerdata import getDockerData
 
 # utils to send data to Ryu
 from socket import gethostname, gethostbyname

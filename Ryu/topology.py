@@ -23,7 +23,7 @@ def dockerMsg():
 @app.route("/getdockermsg", methods=["GET"])
 def getDockerMsg():
     host = request.args.get("host")
-    docker = request.args.get("docker")
+    docker = request.args.get("dockerdata")
     dockers = json.loads(r.get(host))
     tar = None
     # print(dockers)
@@ -42,7 +42,7 @@ def graph_base() -> Graph:
     categories = [
         {"symbol": "circle", 'name': 'ryu'},
         {"symbol": "diamond", 'name': 'host'},
-        {"symbol": "roundRect", 'name': 'docker'},
+        {"symbol": "roundRect", 'name': 'dockerdata'},
     ]
     ryu = opts.GraphNode(name="RYU", symbol_size=40, category=0)  # symbol='roundRect'
     nodes.append(ryu)
