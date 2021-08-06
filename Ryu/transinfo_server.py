@@ -20,7 +20,7 @@ def insert(req):
 
 
 # >threshold1: warning(byte);  >threshold2: ban
-def query(saddr, threshold1=1024, threshold2=1024*1024):
+def query(saddr, threshold1=10000000000000000, threshold2=1000000000000000000000):
     now = int(time.time())
     pkg = session.query(Pkg).filter(Pkg.time > now-60,
                                     Pkg.saddr == saddr).all()  # .all()
