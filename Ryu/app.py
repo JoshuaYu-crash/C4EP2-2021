@@ -56,16 +56,15 @@ class BanIP(db.Model):
 def ban(saddr, banned=True):  # True => banned, False => warning
     item = BanIP.query.filter(BanIP.ban_ip == saddr).first()
     print(item)
-    global update_time
     if item is None:
         new_ban_ip = BanIP(ban_ip=saddr, banned=banned)
         db.session.add(new_ban_ip)
         if banned:
-            update_time = int(time.time())
+            r["update_time"] = int(time.time())
         db.session.commit()
     elif item.banned != banned:
         item.banned = banned
-        update_time = int(time.time())
+        r["update_time"] = int(time.time())
         db.session.commit()
     else:
         print("Banned ip add failed. " + str(saddr) + " exists.")
