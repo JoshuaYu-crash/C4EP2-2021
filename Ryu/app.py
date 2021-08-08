@@ -33,7 +33,7 @@ class Pkg(db.Model):
     host = db.Column(db.String(40))
 
 
-# doubt ips and
+# doubt IP and danger IP
 
 class BanIP(db.Model):
     __tablename__ = "banIP"
@@ -106,12 +106,12 @@ def getNetData():
 @app.route("/setdoubtip", methods=["GET"])
 def setDoubtIP():
     doubtIP = request.args.get("doubtip")
-    add_danger_ip(doubtIP)
+    add_doubt_ip(doubtIP)
     return "OK"
 
 
 # 将IP变为危险IP
-@app.route("/setDangerip", methods=["GET"])
+@app.route("/setdangerip", methods=["GET"])
 def setDangerIP():
     dangerIP = request.args.get("dangerip")
     add_danger_ip(dangerIP)
