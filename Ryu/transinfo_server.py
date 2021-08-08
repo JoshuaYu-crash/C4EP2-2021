@@ -7,14 +7,17 @@ import logging
 import grpc
 import time
 from concurrent import futures
+import redis
 
+r = redis.Redis(host="127.0.0.1", port=6379)
 session = None
-update_time = int(time.time())
+r["update_time"] = int(time.time())
 
 
 def insert(req):
     new_pkg = Pkg(Ty=req.type, protocol=req.protocol, saddr=req.saddr, sport=req.sport, send_byte=req.send_byte,
-                  daddr=req.daddr, dport=req.dport, recv_byte=req.recv_byte, time=req.time, pid=req.pid, com=req.com, host=req.host)
+                  daddr=req.daddr, dport=req.dport, recv_byte=req.recv_byte, time=req.time, pid=req.pid, com=req.com,
+                  host=req.host)
     session.add(new_pkg)
     session.commit()
 
@@ -22,7 +25,7 @@ def insert(req):
 # >threshold1: warning(byte);  >threshold2: ban
 def query(saddr, threshold1=10000000000000000, threshold2=1000000000000000000000):
     now = int(time.time())
-    pkg = session.query(Pkg).filter(Pkg.time > now-60,
+    pkg = session.query(Pkg).filter(Pkg.time > now - 60,
                                     Pkg.saddr == saddr).all()  # .all()
     send_sum = 0
     for e in pkg:
@@ -41,19 +44,18 @@ def query(saddr, threshold1=10000000000000000, threshold2=1000000000000000000000
 def ban(saddr, banned=True):  # True => banned, False => warning
     item = session.query(BanIP).filter(BanIP.ban_ip == saddr).first()
     print(item)
-    global update_time
     return_code = 0
 
     if item == None:
         new_ban_ip = BanIP(ban_ip=saddr, banned=banned)
         session.add(new_ban_ip)
         if banned:
-            update_time = int(time.time())
+            r["update_time"] = int(time.time())
         session.commit()
         # print(str(saddr) + " is added to the banned list.")
     elif item.banned != banned:
         item.banned = banned
-        update_time = int(time.time())
+        r["update_time"] = int(time.time())
         session.commit()
     else:
         print("Banned ip add failed. " + str(saddr) + " exists.")
@@ -89,15 +91,15 @@ class TransInfo:
     def GetInfo(self, request, context):
         print(request)
         insert(req=request)
-        isToBan = query(request.saddr, threshold1=1*1024, threshold2=2*1024)
+        isToBan = query(request.saddr, threshold1=1 * 1024, threshold2=2 * 1024)
         if isToBan == 2:
             ban(request.saddr, banned=True)
         elif isToBan == 1:
             ban(request.saddr, banned=False)
         ban_list = get_ban_list()
 
-        print(str(update_time) + " >= " + str(request.prev_time))
-        if update_time >= request.prev_time and ban_list:
+        print(str(r["update_time"]) + " >= " + str(request.prev_time))
+        if r["update_time"] >= request.prev_time and ban_list:
             return transinfo_pb2.SuccessReply(reply_code=2, reply=str(ban_list))
         else:
             return transinfo_pb2.SuccessReply(reply_code=1, reply="")
@@ -161,7 +163,7 @@ def serve():
 
 def run():
     logging.basicConfig()
-    global session, update_time
+    global session
     session = get_db_session()
     serve()
 

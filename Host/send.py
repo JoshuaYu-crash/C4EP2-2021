@@ -40,7 +40,7 @@ def sendDatas(datas, type, protocol):
 
 
 def sendDockerData():
-    host = "http://" + Config.RyuIP + ":5000/dockermsg"
+    host = "http://" + Config.RyuIP + ":5000/refreshdockermsg"
     sendData = {
         "host": ip,
         "data": getDockerData()
