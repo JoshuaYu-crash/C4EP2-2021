@@ -1,9 +1,8 @@
 from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
 import redis
 from flask_cors import *
 from info_query import *
-from transinfo_server import get_db_session
-session = get_db_session()
 from ip_ban import *
 
 
