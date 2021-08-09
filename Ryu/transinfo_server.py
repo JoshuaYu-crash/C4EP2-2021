@@ -41,6 +41,15 @@ def query(saddr, threshold1=10000000000000000, threshold2=1000000000000000000000
     return ret
 
 
+def broadcast_to_clients():
+    import json
+    banned_IPs = []
+    IPs = session.query(BanIP).filter(BanIP.banned == True).all()  # .all()
+    for ip in IPs:
+        banned_IPs.append(ip)
+    r.publish("Banned IPs", json.dumps(IPs))
+
+
 def ban(saddr, banned=True):  # True => banned, False => warning
     item = session.query(BanIP).filter(BanIP.ban_ip == saddr).first()
     print(item)
@@ -53,10 +62,12 @@ def ban(saddr, banned=True):  # True => banned, False => warning
             r["update_time"] = int(time.time())
         session.commit()
         # print(str(saddr) + " is added to the banned list.")
+        broadcast_to_clients()
     elif item.banned != banned:
         item.banned = banned
         r["update_time"] = int(time.time())
         session.commit()
+        broadcast_to_clients()
     else:
         print("Banned ip add failed. " + str(saddr) + " exists.")
 
@@ -91,7 +102,8 @@ class TransInfo:
     def GetInfo(self, request, context):
         print(request)
         insert(req=request)
-        isToBan = query(request.saddr, threshold1=1 * 1024, threshold2=2 * 1024)
+        isToBan = query(request.saddr, threshold1=1 *
+                        1024, threshold2=2 * 1024)
         if isToBan == 2:
             ban(request.saddr, banned=True)
         elif isToBan == 1:
