@@ -28,7 +28,9 @@ sudo apt-get -y install luajit luajit-5.1-dev
 # python3 need
 sudo apt-get -y install python3-distutils
 
-git clone git://github.com/iovisor/bcc.git
+cd
+
+git clone https://gitee.com/mirrors/bcc.git
 mkdir bcc/build; cd bcc/build
 cmake ..
 make
@@ -41,12 +43,14 @@ popd
 
 apt -y install docker.io
 
-pip3 install docker
+pip3 install docker -i https://mirrors.aliyun.com/pypi/simple/
 
-pip3 install requests
+pip3 install requests -i https://mirrors.aliyun.com/pypi/simple/
 
 pip3 install grpcio -i https://mirrors.aliyun.com/pypi/simple/
 
 pip3 install grpcio-tools -i https://mirrors.aliyun.com/pypi/simple/
 
-pip3 install netifaces
+pip3 install netifaces -i https://mirrors.aliyun.com/pypi/simple/
+
+pip3 install redis -i https://mirrors.aliyun.com/pypi/simple/
