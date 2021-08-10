@@ -58,7 +58,7 @@ def sendDatas(datas, type, protocol):
 
 
 def sendDockerData(r):
-    r.hset("topology", ip, getDockerData())
+    r.hset("topology", ip, json.dumps(getDockerData()))
 
 
 if __name__ == '__main__':
