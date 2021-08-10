@@ -104,12 +104,12 @@ int32 prev_time = 13;
 
 def transinfo(msg=None):
     logging.basicConfig()
-    print(msg)
+    # print(msg)
     reply_code, reply = run(msg)
-    print(reply)
-    if reply_code == 2:
-        write_prev_time(get_time())
-        xdpcontrol.xdpcontrol(eval(reply))
+    # print(reply)
+    # if reply_code == 2:
+    #     write_prev_time(get_time())
+    #     xdpcontrol.xdpcontrol(eval(reply))
 
 
 def get_time():
