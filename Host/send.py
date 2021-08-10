@@ -1,4 +1,5 @@
 import time
+import json
 
 # BPF trace
 from tcp.tcptrace import tcptrace_func, tcptrace_compile
@@ -10,11 +11,28 @@ from dockerdata.dockerdata import getDockerData
 
 # utils to send data to Ryu
 from socket import gethostname, gethostbyname
-import requests
 from transinfo_client import transinfo
 
 # Config Object
 from config import Config
+
+# redis
+import redis
+
+# xdp control
+from xdpcontrol import xdpcontrol, xdpstop
+
+
+# redis connect
+class RedisHelper:
+    def __init__(self):
+        self.connect = redis.Redis(host=Config.RyuIP, port=6379)
+        self.chan = 'banIP'
+
+    def subscribe(self):
+        listen = self.connect.pubsub(ignore_subscribe_messages=True)
+        listen.subscribe(self.chan)
+        return listen
 
 
 
@@ -39,13 +57,8 @@ def sendDatas(datas, type, protocol):
         transinfo(data)
 
 
-def sendDockerData():
-    host = "http://" + Config.RyuIP + ":5000/refreshdockermsg"
-    sendData = {
-        "host": ip,
-        "data": getDockerData()
-    }
-    po = requests.post(url=host, json=sendData)
+def sendDockerData(r):
+    r.hset("topology", ip, getDockerData())
 
 
 if __name__ == '__main__':
@@ -54,11 +67,17 @@ if __name__ == '__main__':
     udp4_data, udp6_data = udptrace_compile()
     icmp_data = icmptrace_compile()
 
+    # get self IP
     hostname = gethostname()
     ip = gethostbyname(hostname)
 
+    # get redis connect
+    rh = RedisHelper()
+    listen = rh.subscribe()
+
     while True:
         try:
+            # net msg sends
             tcp4_datas, tcp6_datas = tcptrace_func(ip4s, ip4r, ip6s, ip6r)
             udp4_datas, udp6_datas = udptrace_func(udp4_data, udp6_data)
             icmp_datas = icmptrace_func(icmp_data)
@@ -67,7 +86,17 @@ if __name__ == '__main__':
             sendDatas(udp4_datas, "ip4", "udp")
             sendDatas(udp6_datas, "ip6", "udp")
             sendDatas(icmp_datas, "ip4", "icmp")
-            # sendDockerData()
+
+            # docker typology send
+            sendDockerData(rh.connect)
+
+            # receive control msg
+            msg = listen.get_message()
+            if msg:
+                data = json.loads(str(msg["data"], encoding='utf-8'))
+                xdpstop()
+                xdpcontrol(data)
+
             time.sleep(1)
         except KeyboardInterrupt:
             break
