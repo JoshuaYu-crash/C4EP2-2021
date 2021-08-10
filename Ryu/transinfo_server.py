@@ -112,7 +112,8 @@ class TransInfo:
 
         print(str(r["update_time"]) + " >= " + str(request.prev_time))
         if int(r["update_time"]) >= request.prev_time and ban_list:
-            return transinfo_pb2.SuccessReply(reply_code=2, reply=str(ban_list))
+            # return transinfo_pb2.SuccessReply(reply_code=2, reply=str(ban_list))
+            return transinfo_pb2.SuccessReply(reply_code=2, reply="")
         else:
             return transinfo_pb2.SuccessReply(reply_code=1, reply="")
 
