@@ -8,6 +8,8 @@ apt -y install mysql-client-5.7
 apt -y install mysql-server-core-5.7
 apt -y install mysql-server-5.7
 apt -y install libmysqlclient-dev
+apt -y install redis
+pip3 install mysqlclient -i https://mirrors.aliyun.com/pypi/simple/
 pip3 install MySQL-python -i https://mirrors.aliyun.com/pypi/simple/
 pip3 install sqlalchemy -i https://mirrors.aliyun.com/pypi/simple/
 pip3 install flask -i https://mirrors.aliyun.com/pypi/simple/

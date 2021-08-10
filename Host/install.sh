@@ -45,8 +45,6 @@ apt -y install docker.io
 
 pip3 install docker -i https://mirrors.aliyun.com/pypi/simple/
 
-pip3 install requests -i https://mirrors.aliyun.com/pypi/simple/
-
 pip3 install grpcio -i https://mirrors.aliyun.com/pypi/simple/
 
 pip3 install grpcio-tools -i https://mirrors.aliyun.com/pypi/simple/
