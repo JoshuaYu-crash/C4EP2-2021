@@ -10,11 +10,11 @@ from concurrent import futures
 import redis
 
 r = redis.Redis(host="127.0.0.1", port=6379)
-session = None
 r["update_time"] = int(time.time())
 
 
 def insert(req):
+    session = get_db_session()
     new_pkg = Pkg(Ty=req.type, protocol=req.protocol, saddr=req.saddr, sport=req.sport, send_byte=req.send_byte,
                   daddr=req.daddr, dport=req.dport, recv_byte=req.recv_byte, time=req.time, pid=req.pid, com=req.com,
                   host=req.host)
@@ -24,6 +24,7 @@ def insert(req):
 
 # >threshold1: warning(byte);  >threshold2: ban
 def query(saddr, threshold1=10000000000000000, threshold2=1000000000000000000000):
+    session = get_db_session()
     now = int(time.time())
     pkg = session.query(Pkg).filter(Pkg.time > now - 60,
                                     Pkg.saddr == saddr).all()  # .all()
@@ -43,14 +44,16 @@ def query(saddr, threshold1=10000000000000000, threshold2=1000000000000000000000
 
 def broadcast_to_clients():
     import json
+    session = get_db_session()
     banned_IPs = []
     IPs = session.query(BanIP).filter(BanIP.banned == True).all()  # .all()
     for ip in IPs:
-        banned_IPs.append(ip)
-    r.publish("Banned IPs", json.dumps(IPs))
+        banned_IPs.append(ip.ban_ip)
+    r.publish("Banned IPs", json.dumps(banned_IPs))
 
 
 def ban(saddr, banned=True):  # True => banned, False => warning
+    session = get_db_session()
     item = session.query(BanIP).filter(BanIP.ban_ip == saddr).first()
     print(item)
     return_code = 0
@@ -90,6 +93,7 @@ def get_db_session():
 
 
 def get_ban_list():
+    session = get_db_session()
     ips = session.query(BanIP).filter(BanIP.banned == True).all()
     ban_list = []
     for e in ips:
@@ -111,11 +115,11 @@ class TransInfo:
         ban_list = get_ban_list()
 
         print(str(r["update_time"]) + " >= " + str(request.prev_time))
-        if int(r["update_time"]) >= request.prev_time and ban_list:
-            # return transinfo_pb2.SuccessReply(reply_code=2, reply=str(ban_list))
-            return transinfo_pb2.SuccessReply(reply_code=2, reply="")
-        else:
-            return transinfo_pb2.SuccessReply(reply_code=1, reply="")
+        # if int(r["update_time"]) >= request.prev_time and ban_list:
+        #     # return transinfo_pb2.SuccessReply(reply_code=2, reply=str(ban_list))
+        #     return transinfo_pb2.SuccessReply(reply_code=2, reply="")
+        # else:
+        return transinfo_pb2.SuccessReply(reply_code=1, reply="")
 
 
 Base = declarative_base()
@@ -176,8 +180,6 @@ def serve():
 
 def run():
     logging.basicConfig()
-    global session
-    session = get_db_session()
     serve()
 
 

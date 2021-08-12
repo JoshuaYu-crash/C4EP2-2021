@@ -4,7 +4,7 @@ import grpc
 import json
 import transinfo_pb2
 import transinfo_pb2_grpc
-import xdpcontrol
+# import xdpcontrol
 from config import Config
 
 
