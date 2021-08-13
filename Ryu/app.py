@@ -62,10 +62,12 @@ def ban(saddr, banned=True):  # True => banned, False => warning
         if banned:
             r["update_time"] = int(time.time())
         db.session.commit()
+        broadcast_to_clients()
     elif item.banned != banned:
         item.banned = banned
         r["update_time"] = int(time.time())
         db.session.commit()
+        broadcast_to_clients()
     else:
         print("Banned ip add failed. " + str(saddr) + " exists.")
 
