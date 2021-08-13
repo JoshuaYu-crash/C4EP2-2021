@@ -94,6 +94,7 @@ if __name__ == '__main__':
             msg = listen.get_message()
             if msg:
                 data = json.loads(str(msg["data"], encoding='utf-8'))
+                print(data)
                 xdpstop()
                 xdpcontrol(data)
 
