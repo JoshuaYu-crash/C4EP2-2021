@@ -70,6 +70,15 @@ def ban(saddr, banned=True):  # True => banned, False => warning
         print("Banned ip add failed. " + str(saddr) + " exists.")
 
 
+def broadcast_to_clients():
+    import json
+    banned_IPs = []
+    IPs = BanIP.query.filter(BanIP.banned == True).all()
+    for ip in IPs:
+        banned_IPs.append(ip.ban_ip)
+    r.publish("Banned IPs", json.dumps(banned_IPs))
+
+
 def add_danger_ip(saddr):
     ban(saddr, banned=True)
 
