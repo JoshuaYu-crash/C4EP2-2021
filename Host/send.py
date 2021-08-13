@@ -27,7 +27,7 @@ from xdpcontrol import xdpcontrol, xdpstop
 class RedisHelper:
     def __init__(self):
         self.connect = redis.Redis(host=Config.RyuIP, port=6379)
-        self.chan = 'banIP'
+        self.chan = 'Banned IPs'
 
     def subscribe(self):
         listen = self.connect.pubsub(ignore_subscribe_messages=True)
