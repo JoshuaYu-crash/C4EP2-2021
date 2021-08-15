@@ -194,7 +194,7 @@ def graph_base() -> Graph:
     ryu = opts.GraphNode(name="RYU", symbol_size=40, category=0)  # symbol='roundRect'
     nodes.append(ryu)
     doc_id = 1
-    for key in r.keys():
+    for key in r.hkeys("typology"):
         host = opts.GraphNode(name=key, symbol_size=30, category=1)  # symbol='diamond'
         nodes.append(host)
         ryuHostLink = opts.GraphLink(source="RYU", target=key)
