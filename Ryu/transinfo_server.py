@@ -56,8 +56,6 @@ def broadcast_to_clients():
 def ban(saddr, banned=True):  # True => banned, False => warning
     session = get_db_session()
     item = session.query(BanIP).filter(BanIP.ban_ip == saddr).first()
-    print(item.banned)
-    print(item.ban_ip)
     return_code = 0
 
     if item == None:
