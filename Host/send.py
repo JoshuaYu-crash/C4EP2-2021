@@ -6,12 +6,13 @@ from tcp.tcptrace import tcptrace_func, tcptrace_compile
 from udp.udptrace import udptrace_func, udptrace_compile
 from icmp.icmptrace import icmptrace_func, icmptrace_compile
 
-# dockerdata data
+# dockerdata get
 from dockerdata.dockerdata import getDockerData
 
 # utils to send data to Ryu
 from socket import gethostname, gethostbyname
 from transinfo_client import transinfo
+import requests
 
 # Config Object
 from config import Config
@@ -22,18 +23,17 @@ import redis
 # xdp control
 from xdpcontrol import xdpcontrol, xdpstop
 
-r = redis.Redis(host=Config.RyuIP, port=6379)
+
 # redis connect
 class RedisHelper:
     def __init__(self):
-        self.connect = r
+        self.connect = redis.Redis(host=Config.RyuIP, port=6379)
         self.chan = 'Banned IPs'
 
     def subscribe(self):
         listen = self.connect.pubsub(ignore_subscribe_messages=True)
         listen.subscribe(self.chan)
         return listen
-
 
 
 # tcp special filter for the Ryu
@@ -58,7 +58,12 @@ def sendDatas(datas, type, protocol):
 
 
 def sendDockerData():
-    r.hset("topology", ip, json.dumps(getDockerData()))
+    host = "http://" + Config.RyuIP + ":5000/refreshdockermsg"
+    sendData = {
+        "host": ip,
+        "data": getDockerData()
+    }
+    requests.post(url=host, json=sendData)
 
 
 if __name__ == '__main__':

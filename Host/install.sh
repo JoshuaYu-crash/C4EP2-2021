@@ -52,3 +52,5 @@ pip3 install grpcio-tools -i https://mirrors.aliyun.com/pypi/simple/
 pip3 install netifaces -i https://mirrors.aliyun.com/pypi/simple/
 
 pip3 install redis -i https://mirrors.aliyun.com/pypi/simple/
+
+pip3 install requests -i https://mirrors.aliyun.com/pypi/simple/

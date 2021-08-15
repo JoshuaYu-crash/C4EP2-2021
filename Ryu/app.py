@@ -158,6 +158,16 @@ def getBanIP():
 # /*----------------Typology Show Interface----------------*/
 
 
+# Receive Msg From Hosts
+@app.route("/refreshdockermsg", methods=["POST"])
+def dockerMsg():
+    data = request.json
+    host = data["host"]
+    datalist = data["data"]
+    r.hset("topology", host, datalist)
+    return "ok"
+
+
 @app.route("/getdockermsg", methods=["GET"])
 def getDockerMsg():
     host = request.args.get("host")
