@@ -57,13 +57,14 @@ def sendDatas(datas, type, protocol):
         transinfo(data)
 
 
-def sendDockerData():
-    host = "http://" + Config.RyuIP + ":5000/refreshdockermsg"
-    sendData = {
-        "host": ip,
-        "data": getDockerData()
-    }
-    requests.post(url=host, json=sendData)
+def sendDockerData(r):
+    # host = "http://" + Config.RyuIP + ":5000/refreshdockermsg"
+    # sendData = {
+    #     "host": ip,
+    #     "data": getDockerData()
+    # }
+    # requests.post(url=host, json=sendData)
+    r.hset("typology", ip, getDockerData())
 
 
 if __name__ == '__main__':
@@ -93,7 +94,7 @@ if __name__ == '__main__':
             sendDatas(icmp_datas, "ip4", "icmp")
 
             # docker typology send
-            sendDockerData()
+            sendDockerData(rh.connect)
 
             # receive control msg
             msg = listen.get_message()
