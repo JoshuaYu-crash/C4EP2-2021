@@ -131,9 +131,9 @@ def setBanIP():
             doubtips.append(i)
     # update the database
     for i in dangerips:
-        add_danger_ip(i)
+        add_danger_ip(i["label"])
     for i in doubtips:
-        add_doubt_ip(i)
+        add_doubt_ip(i["label"])
     # use redis to seng msg to hosts
     broadcast_to_clients()
     return "OK"
