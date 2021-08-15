@@ -172,7 +172,7 @@ def dockerMsg():
 def getDockerMsg():
     host = request.args.get("host")
     docker = request.args.get("dockerdata")
-    dockers = json.loads(r.hget("topology", host))
+    dockers = json.loads(r.hget("typology", host))
     tar = None
     # print(dockers)
     for doc in dockers:
