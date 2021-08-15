@@ -174,7 +174,7 @@ def getDockerMsg():
     docker = request.args.get("dockerdata")
     dockers = json.loads(r.hget("typology", host))
     tar = None
-    # print(dockers)
+    print(dockers)
     for doc in dockers:
         print(doc["NetworkSettings"]["Networks"]["bridge"]["IPAddress"], docker)
         if docker == doc["NetworkSettings"]["Networks"]["bridge"]["IPAddress"]:
