@@ -22,11 +22,11 @@ import redis
 # xdp control
 from xdpcontrol import xdpcontrol, xdpstop
 
-
+r = redis.Redis(host=Config.RyuIP, port=6379)
 # redis connect
 class RedisHelper:
     def __init__(self):
-        self.connect = redis.Redis(host=Config.RyuIP, port=6379)
+        self.connect = r
         self.chan = 'Banned IPs'
 
     def subscribe(self):
@@ -57,7 +57,7 @@ def sendDatas(datas, type, protocol):
         transinfo(data)
 
 
-def sendDockerData(r):
+def sendDockerData():
     r.hset("topology", ip, json.dumps(getDockerData()))
 
 
@@ -88,7 +88,7 @@ if __name__ == '__main__':
             sendDatas(icmp_datas, "ip4", "icmp")
 
             # docker typology send
-            sendDockerData(rh.connect)
+            sendDockerData()
 
             # receive control msg
             msg = listen.get_message()

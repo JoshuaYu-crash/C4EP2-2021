@@ -114,7 +114,7 @@ def getNetData():
 
 
 # 设置IP规则
-@app.route("/setbanip", methods=["GET"])
+@app.route("/setbanip", methods=["POST"])
 def setBanIP():
     data = request.json.get("data")
     value = request.json.get("value")
