@@ -64,7 +64,7 @@ def sendDockerData(r):
     #     "data": getDockerData()
     # }
     # requests.post(url=host, json=sendData)
-    r.hset("typology", ip, getDockerData())
+    r.hset("typology", ip, json.dumps(getDockerData()))
 
 
 if __name__ == '__main__':
