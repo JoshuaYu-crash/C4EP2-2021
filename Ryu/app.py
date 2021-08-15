@@ -62,12 +62,10 @@ def ban(saddr, banned=True):  # True => banned, False => warning
         if banned:
             r["update_time"] = int(time.time())
         db.session.commit()
-        broadcast_to_clients()
     elif item.banned != banned:
         item.banned = banned
         r["update_time"] = int(time.time())
         db.session.commit()
-        broadcast_to_clients()
     else:
         print("Banned ip add failed. " + str(saddr) + " exists.")
 
@@ -115,19 +113,29 @@ def getNetData():
     return jsonify(data)
 
 
-# 将IP变为可疑IP
-@app.route("/setdoubtip", methods=["GET"])
-def setDoubtIP():
-    doubtIP = request.args.get("doubtip")
-    add_doubt_ip(doubtIP)
-    return "OK"
-
-
-# 将IP变为危险IP
-@app.route("/setdangerip", methods=["GET"])
-def setDangerIP():
-    dangerIP = request.args.get("dangerip")
-    add_danger_ip(dangerIP)
+# 设置IP规则
+@app.route("/setbanip", methods=["GET"])
+def setBanIP():
+    data = request.json.get("data")
+    value = request.json.get("value")
+    global dangerip
+    global doubtip
+    dangerips = []
+    doubtips = []
+    # get the rules
+    for i in data:
+        if i["key"] in value:
+            # print(doubtips)
+            dangerips.append(i)
+        else:
+            doubtips.append(i)
+    # update the database
+    for i in dangerips:
+        add_danger_ip(i)
+    for i in doubtips:
+        add_doubt_ip(i)
+    # use redis to seng msg to hosts
+    broadcast_to_clients()
     return "OK"
 
 
@@ -149,17 +157,6 @@ def getBanIP():
 
 # /*----------------Typology Show Interface----------------*/
 
-# Receive Msg From Hosts
-@app.route("/refreshdockermsg", methods=["POST"])
-def dockerMsg():
-    data = request.json
-    host = data["host"]
-    datalist = data["data"]
-    # print(datalist)
-    # r.set(host, json.dumps(datalist))
-    r.hset("topology", host, datalist)
-    return "ok"
-
 
 @app.route("/getdockermsg", methods=["GET"])
 def getDockerMsg():
@@ -173,7 +170,6 @@ def getDockerMsg():
         if docker == doc["NetworkSettings"]["Networks"]["bridge"]["IPAddress"]:
             tar = doc
             break
-    print(tar)
     return jsonify(tar)
 
 
@@ -193,7 +189,7 @@ def graph_base() -> Graph:
         nodes.append(host)
         ryuHostLink = opts.GraphLink(source="RYU", target=key)
         links.append(ryuHostLink)
-        dockerlist = json.loads(r.get(key))
+        dockerlist = json.loads(r.hget("topology", key))
         for doc in dockerlist:
             docName = doc["Names"][0]
             docInfo = str(key, encoding='utf-8') + '/' + doc["NetworkSettings"]["Networks"]["bridge"]["IPAddress"]

@@ -8,6 +8,7 @@ import grpc
 import time
 from concurrent import futures
 import redis
+from config import Config
 
 r = redis.Redis(host="127.0.0.1", port=6379)
 r["update_time"] = int(time.time())
@@ -23,7 +24,7 @@ def insert(req):
 
 
 # >threshold1: warning(byte);  >threshold2: ban
-def query(saddr, threshold1=10000000000000000, threshold2=1000000000000000000000):
+def query(saddr, threshold1=Config.doubtThreshold, threshold2=Config.dangerThreshold):
     session = get_db_session()
     now = int(time.time())
     pkg = session.query(Pkg).filter(Pkg.time > now - 60,
@@ -107,8 +108,7 @@ class TransInfo:
     def GetInfo(self, request, context):
         print(request)
         insert(req=request)
-        isToBan = query(request.saddr, threshold1=1 *
-                        1024, threshold2=2 * 1024)
+        isToBan = query(request.saddr, threshold1=Config.doubtThreshold, threshold2=Config.dangerThreshold)
         if isToBan == 2:
             ban(request.saddr, banned=True)
         elif isToBan == 1:
