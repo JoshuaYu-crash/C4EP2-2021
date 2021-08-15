@@ -200,6 +200,7 @@ def graph_base() -> Graph:
         ryuHostLink = opts.GraphLink(source="RYU", target=key)
         links.append(ryuHostLink)
         dockerlist = json.loads(r.hget("typology", key))
+        print(dockerlist)
         for doc in dockerlist:
             docName = doc["Names"][0]
             docInfo = str(key, encoding='utf-8') + '/' + doc["NetworkSettings"]["Networks"]["bridge"]["IPAddress"]
