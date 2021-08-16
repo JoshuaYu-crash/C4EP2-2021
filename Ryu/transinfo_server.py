@@ -12,10 +12,11 @@ from config import Config
 
 r = redis.Redis(host="127.0.0.1", port=6379)
 r["update_time"] = int(time.time())
+session = None
 
 
 def insert(req):
-    session = get_db_session()
+    # session = get_db_session()
     new_pkg = Pkg(Ty=req.type, protocol=req.protocol, saddr=req.saddr, sport=req.sport, send_byte=req.send_byte,
                   daddr=req.daddr, dport=req.dport, recv_byte=req.recv_byte, time=req.time, pid=req.pid, com=req.com,
                   host=req.host)
@@ -25,7 +26,7 @@ def insert(req):
 
 # >threshold1: warning(byte);  >threshold2: ban
 def query(saddr, threshold1=Config.doubtThreshold, threshold2=Config.dangerThreshold):
-    session = get_db_session()
+    # session = get_db_session()
     now = int(time.time())
     pkg = session.query(Pkg).filter(Pkg.time > now - 60,
                                     Pkg.saddr == saddr).all()  # .all()
@@ -45,7 +46,7 @@ def query(saddr, threshold1=Config.doubtThreshold, threshold2=Config.dangerThres
 
 def broadcast_to_clients():
     import json
-    session = get_db_session()
+    # session = get_db_session()
     banned_IPs = []
     IPs = session.query(BanIP).filter(BanIP.banned == True).all()  # .all()
     for ip in IPs:
@@ -54,7 +55,7 @@ def broadcast_to_clients():
 
 
 def ban(saddr, banned=True):  # True => banned, False => warning
-    session = get_db_session()
+    # session = get_db_session()
     item = session.query(BanIP).filter(BanIP.ban_ip == saddr).first()
     return_code = 0
 
@@ -93,7 +94,7 @@ def get_db_session():
 
 
 def get_ban_list():
-    session = get_db_session()
+    # session = get_db_session()
     ips = session.query(BanIP).filter(BanIP.banned == True).all()
     ban_list = []
     for e in ips:
@@ -106,7 +107,8 @@ class TransInfo:
     def GetInfo(self, request, context):
         print(request)
         insert(req=request)
-        isToBan = query(request.saddr, threshold1=Config.doubtThreshold, threshold2=Config.dangerThreshold)
+        isToBan = query(request.saddr, threshold1=Config.doubtThreshold,
+                        threshold2=Config.dangerThreshold)
         if isToBan == 2:
             ban(request.saddr, banned=True)
         elif isToBan == 1:
@@ -178,6 +180,8 @@ def serve():
 
 
 def run():
+    global session
+    session = get_db_session()
     logging.basicConfig()
     serve()
 
