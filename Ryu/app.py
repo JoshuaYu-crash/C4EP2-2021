@@ -96,6 +96,7 @@ def getNetData():
     dockerIP = request.args.get("dockerip")
     protocol = request.args.get("protocol")
     now = time.time()
+    print(len(Pkg.query.all()))
     pkgs = Pkg.query.filter(Pkg.daddr == dockerIP, Pkg.protocol == protocol, Pkg.host == hostIP,
                             Pkg.time >= now - 2).all()
     ret = 0
