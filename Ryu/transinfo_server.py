@@ -18,7 +18,7 @@ session = None
 def insert(req):
     # session = get_db_session()
     new_pkg = Pkg(Ty=req.type, protocol=req.protocol, saddr=req.saddr, sport=req.sport, send_byte=req.send_byte,
-                  daddr=req.daddr, dport=req.dport, recv_byte=req.recv_byte, time=req.time, pid=req.pid, com=req.com,
+                  daddr=req.daddr, dport=req.dport, recv_byte=req.recv_byte, time=int(time.time()), pid=req.pid, com=req.com,
                   host=req.host)
     session.add(new_pkg)
     session.commit()
