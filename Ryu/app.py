@@ -102,10 +102,10 @@ def getNetData():
     print(dockerIP)
     print(protocol)
     pkgs = Pkg.query.filter(Pkg.daddr == dockerIP, Pkg.protocol == protocol, Pkg.host == hostIP,
-                            Pkg.time >= now - 5).all()
+                            Pkg.time >= now - 2).all()
     print(pkgs)
     ret = 0
-    last_time = 0
+    last_time = int(time.time())
     try:
         last_time = pkgs[-1].time
     except:
