@@ -28,6 +28,14 @@ cd C4EP2file/Ryu
 sh install.sh
 ```
 
+配置MySQL数据库
+
+```shell
+mysql # 进入MySQL
+> create database package;
+> quit
+```
+
 配置`Redis`
 
 ```shell
