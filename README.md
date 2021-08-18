@@ -40,10 +40,9 @@ mysql # 进入MySQL
 
 ```shell
 vim /etc/redis/redis.conf
-# 将bind 127.0.0.1 修改为 Ryu 的IP，保存退出
+# 注释 "bind 127.0.0.1 ::1" 这一行，并将 protected_mode yes 改为 protected_mode no
 
 systemctl restart redis
-ufw allow 6379
 
 # 测试redis
 redis-cli -h <Ryu IP> -p 6379
