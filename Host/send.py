@@ -64,6 +64,7 @@ def redisSubscribeHandler():
         if str(msg["channel"], encoding="utf-8") == "Container Msg":
             containerID = str(msg["data"], encoding='utf-8')
             ret = getDockerStats(containerID)
+            print(ret)
             rh.connect.set("containermsg", json.dumps(ret), ex=3)
         elif str(msg["channel"], encoding="utf-8") == "Banned IPs":
             data = json.loads(str(msg["data"], encoding='utf-8'))
