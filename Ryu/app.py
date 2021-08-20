@@ -188,6 +188,21 @@ def getDockerMsg():
     return jsonify(tar)
 
 
+@app.route("/getdockerstats", methods=["GET"])
+def getDockerStats():
+    dockerID = request.args.get("dockerid")
+    r.publish("Container Msg", dockerID)
+    start = int(time.time())
+    while True:
+        stats = r.get("containermsg")
+        if stats is not None:
+            break
+        elif int(time.time())-start > 2:
+            break
+    ret = json.loads(stats)
+    return jsonify(ret)
+
+
 def graph_base() -> Graph:
     nodes = []
     links = []

@@ -7,12 +7,11 @@ from udp.udptrace import udptrace_func, udptrace_compile
 from icmp.icmptrace import icmptrace_func, icmptrace_compile
 
 # dockerdata get
-from dockerdata.dockerdata import getDockerData
+from dockerdata.dockerdata import getDockerData, getDockerStats
 
 # utils to send data to Ryu
 from socket import gethostname, gethostbyname
 from transinfo_client import transinfo
-import requests
 
 # Config Object
 from config import Config
@@ -28,11 +27,12 @@ from xdpcontrol import xdpcontrol, xdpstop
 class RedisHelper:
     def __init__(self):
         self.connect = redis.Redis(host=Config.RyuIP, port=6379)
-        self.chan = 'Banned IPs'
+        self.banIPChan = 'Banned IPs'
+        self.containerChan = 'Container Msg'
 
     def subscribe(self):
         listen = self.connect.pubsub(ignore_subscribe_messages=True)
-        listen.subscribe(self.chan)
+        listen.subscribe(self.banIPChan, self.containerChan)
         return listen
 
 
@@ -57,14 +57,19 @@ def sendDatas(datas, type, protocol):
         transinfo(data)
 
 
-def sendDockerData(r):
-    # host = "http://" + Config.RyuIP + ":5000/refreshdockermsg"
-    # sendData = {
-    #     "host": ip,
-    #     "data": getDockerData()
-    # }
-    # requests.post(url=host, json=sendData)
-    r.hset("typology", ip, json.dumps(getDockerData()))
+def redisSubscribeHandler():
+    # receive control msg
+    msg = listen.get_message()
+    if msg:
+        if str(msg["channel"], encoding="utf-8") == "Container Msg":
+            containerID = str(msg["data"], encoding='utf-8')
+            ret = getDockerStats(containerID)
+            rh.connect.set("containermsg", json.dumps(ret), ex=3)
+        elif str(msg["channel"], encoding="utf-8") == "Banned IPs":
+            data = json.loads(str(msg["data"], encoding='utf-8'))
+            print(data)
+            xdpstop()
+            xdpcontrol(data)
 
 
 if __name__ == '__main__':
@@ -94,15 +99,17 @@ if __name__ == '__main__':
             sendDatas(icmp_datas, "ip4", "icmp")
 
             # docker typology send
-            sendDockerData(rh.connect)
+            rh.connect.hset("typology", ip, json.dumps(getDockerData()))
 
+            # redis subscribe handler
+            redisSubscribeHandler()
             # receive control msg
-            msg = listen.get_message()
-            if msg:
-                data = json.loads(str(msg["data"], encoding='utf-8'))
-                print(data)
-                xdpstop()
-                xdpcontrol(data)
+            # msg = listen.get_message()
+            # if msg:
+            #     data = json.loads(str(msg["data"], encoding='utf-8'))
+            #     print(data)
+            #     xdpstop()
+            #     xdpcontrol(data)
 
             time.sleep(1)
         except KeyboardInterrupt:
