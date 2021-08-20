@@ -7,7 +7,7 @@ def getDockerData():
     return cli.containers()
 
 def getDockerStats(containID):
-    return cli.stats(containID)
+    return cli.stats(containID, stream=False)
 
 
 if __name__ == '__main__':
