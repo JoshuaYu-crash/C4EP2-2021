@@ -232,14 +232,18 @@ def getRadarMsg():
         ipdict[i.saddr] = 0
     totalipnum = len(ipdict)
     hostips = r.hkeys("topology")
-    dockers = [json.loads(r.hget("typology", hostip)) for hostip in hostips]
+    hosts = [json.loads(r.hget("typology", hostip)) for hostip in hostips]
     maxmemuse = 0
     avermemuse = 0
-    for i in dockers:
-        avermemuse += i["stats"]["memory_stats"]["usage"]
-        if i["stats"]["memory_stats"]["max_usage"] > maxmemuse:
-            maxmemuse = i["stats"]["memory_stats"]["max_usage"]
-    avermemuse /= len(dockers)
+    cnt = 0
+    for host in hosts:
+        for i in host:
+            cnt += 1
+            avermemuse += i["stats"]["memory_stats"]["usage"]
+            if i["stats"]["memory_stats"]["max_usage"] > maxmemuse:
+                maxmemuse = i["stats"]["memory_stats"]["max_usage"]
+    if cnt != 0:
+        avermemuse /= cnt
     return jsonify({
         "dangerrate": len(danger)/totalipnum,
         "doubtrate": len(doubt)/totalipnum,
