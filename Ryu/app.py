@@ -228,8 +228,17 @@ def getRadarMsg():
             doubt.append(ip.ban_ip)
     ipdata = Pkg.query.all()
     ipdict = {}
+    averpkg = 0
+    maxpkg = 0
+    pkgcnt = 0
     for i in ipdata:
+        pkgcnt += 1
+        averpkg += i.send_byte + i.recv_byte
+        if i.send_byte + i.recv_byte > maxpkg:
+            maxpkg = i.send_byte + i.recv_byte
         ipdict[i.saddr] = 0
+    if averpkg != 0:
+        averpkg /= pkgcnt
     totalipnum = len(ipdict)
     hostips = r.hkeys("typology")
     # print(hostips)
@@ -251,7 +260,9 @@ def getRadarMsg():
         "dangerrate": len(danger)/totalipnum,
         "doubtrate": len(doubt)/totalipnum,
         "maxmemuse": maxmemuse,
-        "avermemuse":avermemuse
+        "avermemuse":avermemuse,
+        "averpkg": averpkg,
+        "maxpkg": maxpkg
     })
 
 
