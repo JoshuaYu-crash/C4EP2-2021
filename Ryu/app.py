@@ -218,7 +218,23 @@ def getIPSortList():
 
 @app.route("/getradarmsg")
 def getRadarMsg():
-    pass
+    danger = [],
+    doubt = []
+    IPs = BanIP.query.filter().all()
+    for ip in IPs:
+        if ip.banned:
+            danger.append(ip.ban_ip)
+        else:
+            doubt.append(ip.ban_ip)
+    ipdata = Pkg.query.all()
+    ipdict = {}
+    for i in ipdata:
+        ipdict[i.saddr] = 0
+    totalipnum = len(ipdict)
+    return jsonify({
+        "dangerrate": len(danger)/totalipnum,
+        "doubtrate": len(doubt)/totalipnum
+    })
 
 
 
