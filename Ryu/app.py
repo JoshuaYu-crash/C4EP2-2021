@@ -232,9 +232,9 @@ def getRadarMsg():
         ipdict[i.saddr] = 0
     totalipnum = len(ipdict)
     hostips = r.hkeys("typology")
-    print(hostips)
+    # print(hostips)
     hosts = [json.loads(r.hget("typology", hostip)) for hostip in hostips]
-    print(hosts)
+    # print(hosts)
     maxmemuse = 0
     avermemuse = 0
     cnt = 0
@@ -246,6 +246,7 @@ def getRadarMsg():
                 maxmemuse = i["stats"]["memory_stats"]["max_usage"]
     if cnt != 0:
         avermemuse /= cnt
+    print("cnt=", cnt)
     return jsonify({
         "dangerrate": len(danger)/totalipnum,
         "doubtrate": len(doubt)/totalipnum,
