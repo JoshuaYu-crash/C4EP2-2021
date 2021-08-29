@@ -231,7 +231,7 @@ def getRadarMsg():
     for i in ipdata:
         ipdict[i.saddr] = 0
     totalipnum = len(ipdict)
-    hostips = r.hkeys("topology")
+    hostips = r.hkeys("typology")
     print(hostips)
     hosts = [json.loads(r.hget("typology", hostip)) for hostip in hostips]
     print(hosts)
