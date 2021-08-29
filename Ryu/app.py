@@ -203,6 +203,23 @@ def getDockerStats():
     return jsonify(ret)
 
 
+@app.route("/getipsortlist")
+def getIPSortList():
+    ipdata = Pkg.query.all()
+    ipdict = {}
+    for i in ipdata:
+        ipdict[i.saddr] += 1
+    sortlist = sorted(ipdict.items(), key=lambda kv:(kv[1], kv[0]), reverse=True)
+    return jsonify(sortlist)
+
+
+
+@app.route("/getradarmsg")
+def getRadarMsg():
+    pass
+
+
+
 def graph_base() -> Graph:
     nodes = []
     links = []
