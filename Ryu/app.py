@@ -232,7 +232,9 @@ def getRadarMsg():
         ipdict[i.saddr] = 0
     totalipnum = len(ipdict)
     hostips = r.hkeys("topology")
+    print(hostips)
     hosts = [json.loads(r.hget("typology", hostip)) for hostip in hostips]
+    print(hosts)
     maxmemuse = 0
     avermemuse = 0
     cnt = 0
