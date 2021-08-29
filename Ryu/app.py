@@ -218,7 +218,7 @@ def getIPSortList():
 
 @app.route("/getradarmsg")
 def getRadarMsg():
-    danger = [],
+    danger = []
     doubt = []
     IPs = BanIP.query.filter().all()
     for ip in IPs:
