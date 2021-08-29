@@ -100,7 +100,8 @@ if __name__ == '__main__':
             sendDatas(icmp_datas, "ip4", "icmp")
 
             # docker typology send
-            rh.connect.hset("typology", ip, json.dumps(getDockerData()))
+            if int(time.time()) % 5 == 0:
+                rh.connect.hset("typology", ip, json.dumps(getDockerData()))
 
             # redis subscribe handler
             redisSubscribeHandler()
