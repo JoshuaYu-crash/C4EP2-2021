@@ -102,7 +102,7 @@ def getNetData():
     print(dockerIP)
     print(protocol)
     pkgs = Pkg.query.filter(Pkg.daddr == dockerIP, Pkg.protocol == protocol, Pkg.host == hostIP,
-                            Pkg.time >= now - 2).all()
+                            Pkg.time >= now - 20).all()
     print(pkgs)
     ret = 0
     last_time = int(time.time())
@@ -220,7 +220,7 @@ def getIPSortList():
 def getRadarMsg():
     danger = []
     doubt = []
-    IPs = BanIP.query.filter().all()
+    IPs = BanIP.query.all()
     for ip in IPs:
         if ip.banned:
             danger.append(ip.ban_ip)
